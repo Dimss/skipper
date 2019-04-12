@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+
 	r := chi.NewRouter()
 	r.Get("/users", rbac.GetUsersHandler)
 	r.Get("/roles", rbac.GetRolesHandler)

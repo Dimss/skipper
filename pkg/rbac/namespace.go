@@ -22,5 +22,7 @@ func GetNamespaces() (ocpNamespaces []string) {
 	for _, ocpNs := range namespaces.Items {
 		ocpNamespaces = append(ocpNamespaces, ocpNs.Name)
 	}
+	// Append clusterrole manually
+	ocpNamespaces = append(ocpNamespaces, "clusterrole")
 	return
 }
