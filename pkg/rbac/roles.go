@@ -53,7 +53,7 @@ func GetRoles() (ocpRoles map[string][]string) {
 	namespaces := GetNamespaces()
 	var wg sync.WaitGroup
 	nsChan := make(chan string, len(namespaces))
-	rolesChan := make(chan map[string][]string, 100)
+	rolesChan := make(chan map[string][]string, len(namespaces))
 	for _, ns := range namespaces {
 		wg.Add(1)
 		go getRolesForNs(rbacV1Client, nsChan, rolesChan, &wg)
