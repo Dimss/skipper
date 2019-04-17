@@ -5,22 +5,23 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	rbacV1 "k8s.io/client-go/kubernetes/typed/rbac/v1"
 	"sync"
-
+	rbacApiV1 "k8s.io/api/rbac/v1"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-func getRolesForNs(rbacV1Client *rbacV1.RbacV1Client, nsChan chan string, rolesChan chan map[string][]string, wg *sync.WaitGroup) {
+func getRolesForNs(rbacV1Client *rbacV1.RbacV1Client, nsChan chan string, rolesChan chan map[string][]rbacApiV1.PolicyRule, wg *sync.WaitGroup) {
+	roles2Namespace := map[string][]rbacApiV1.PolicyRule{}
 	for ns := range nsChan {
-		roles, err := rbacV1Client.Roles(ns).List(metav1.ListOptions{})
+
+		roles, err := rbacV1Client.Roles("").List(metav1.ListOptions{})
 		if err != nil {
 			panic(err.Error())
 		}
 		logrus.Infof("Total roles for namespace %s in OCP cluster: %d", ns, len(roles.Items))
-		var nsRoles []string
 		for _, ocpRole := range roles.Items {
-			nsRoles = append(nsRoles, ocpRole.Name)
+			roles2Namespace[ocpRole.Namespace] = append(roles2Namespace[ocpRole.Namespace], ocpRole)
 		}
-		rolesChan <- map[string][]string{ns: nsRoles}
+		rolesChan <- roles2Namespace
 	}
 	wg.Done()
 }
@@ -36,8 +37,8 @@ func getClusterRoles(rbacV1Client *rbacV1.RbacV1Client) (nsRoles []string) {
 	return
 }
 
-func GetRoles() (ocpRoles map[string][]string) {
-	ocpRoles = make(map[string][]string)
+func GetRoles() (ocpRoles map[string][]rbacApiV1.PolicyRule) {
+	ocpRoles = make(map[string][]rbacApiV1.PolicyRule)
 	logrus.Info("Getting roles")
 	conf := "/Users/dima/.kube/config"
 	config, err := clientcmd.BuildConfigFromFlags("", conf)
@@ -49,11 +50,11 @@ func GetRoles() (ocpRoles map[string][]string) {
 	if err != nil {
 		panic(err.Error())
 	}
-	// Get Roles
-	namespaces := GetNamespaces()
+	// Get Roles in all namespaces - empty namespace "" = --all-namespaces
+	namespaces := []string{""}
 	var wg sync.WaitGroup
 	nsChan := make(chan string, len(namespaces))
-	rolesChan := make(chan map[string][]string, len(namespaces))
+	rolesChan := make(chan map[string][]rbacApiV1.PolicyRule, len(namespaces))
 	for _, ns := range namespaces {
 		wg.Add(1)
 		go getRolesForNs(rbacV1Client, nsChan, rolesChan, &wg)
