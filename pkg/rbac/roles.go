@@ -9,8 +9,8 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-func getRolesForNs(rbacV1Client *rbacV1.RbacV1Client, nsChan chan string, rolesChan chan map[string][]rbacApiV1.PolicyRule, wg *sync.WaitGroup) {
-	roles2Namespace := map[string][]rbacApiV1.PolicyRule{}
+func getRolesForNs(rbacV1Client *rbacV1.RbacV1Client, nsChan chan string, rolesChan chan map[string][]rbacApiV1.Role, wg *sync.WaitGroup) {
+	roles2Namespace := map[string][]rbacApiV1.Role{}
 	for ns := range nsChan {
 
 		roles, err := rbacV1Client.Roles("").List(metav1.ListOptions{})
@@ -37,8 +37,8 @@ func getClusterRoles(rbacV1Client *rbacV1.RbacV1Client) (nsRoles []string) {
 	return
 }
 
-func GetRoles() (ocpRoles map[string][]rbacApiV1.PolicyRule) {
-	ocpRoles = make(map[string][]rbacApiV1.PolicyRule)
+func GetRoles() (ocpRoles map[string][]rbacApiV1.Role) {
+	ocpRoles = make(map[string][]rbacApiV1.Role)
 	logrus.Info("Getting roles")
 	conf := "/Users/dima/.kube/config"
 	config, err := clientcmd.BuildConfigFromFlags("", conf)
@@ -54,7 +54,7 @@ func GetRoles() (ocpRoles map[string][]rbacApiV1.PolicyRule) {
 	namespaces := []string{""}
 	var wg sync.WaitGroup
 	nsChan := make(chan string, len(namespaces))
-	rolesChan := make(chan map[string][]rbacApiV1.PolicyRule, len(namespaces))
+	rolesChan := make(chan map[string][]rbacApiV1.Role, len(namespaces))
 	for _, ns := range namespaces {
 		wg.Add(1)
 		go getRolesForNs(rbacV1Client, nsChan, rolesChan, &wg)
@@ -69,6 +69,6 @@ func GetRoles() (ocpRoles map[string][]rbacApiV1.PolicyRule) {
 		}
 	}
 	// Get cluster roles
-	ocpRoles["clusterrole"] = getClusterRoles(rbacV1Client)
+	//ocpRoles["clusterrole"] = getClusterRoles(rbacV1Client)
 	return
 }
