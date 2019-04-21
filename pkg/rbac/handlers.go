@@ -14,6 +14,7 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetRolesHandler(w http.ResponseWriter, r *http.Request) {
+	ns := r.URL.Query().Get("namespace")
 	//nodes := []Nodes{
 	//	{"Get", "get"},
 	//	{"Watch", "watch"},
@@ -44,9 +45,9 @@ func GetRolesHandler(w http.ResponseWriter, r *http.Request) {
 	//
 	//
 	//data := SunkeyData{nodes, links}
-	roles := GetRoles()
-	responsePayload := ResponsePayload{Status: "ok", Data: roles}
-	if response, err := json.Marshal(responsePayload); err == nil {
+	sunkeyData := GetRoles(ns)
+	//responsePayload := ResponsePayload{Status: "ok", Data: roles}
+	if response, err := json.Marshal(sunkeyData); err == nil {
 		w.Write(response)
 	}
 }

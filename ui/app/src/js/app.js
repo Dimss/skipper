@@ -1,1 +1,66 @@
-console.log("Hello world!!!");
+toastr.options = {
+    "closeButton": false,
+    "debug": false,
+    "newestOnTop": false,
+    "progressBar": true,
+    "positionClass": "toast-bottom-right",
+    "preventDuplicates": true,
+    "onclick": null,
+    "showDuration": "300",
+    "hideDuration": "1000",
+    "timeOut": "5000",
+    "extendedTimeOut": "1000",
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+};
+
+$(document).ready(function () {
+
+    createSunKeyGraph("kube-system");
+    $.getJSON("/namespaces", function (data) {
+        let namespacesForSelect = [];
+        data.data.forEach((elem, idx) => {
+            namespacesForSelect.push({id: elem, text: elem})
+        });
+        let namespaceDropdown = $("#namespaces-dropdown");
+        namespaceDropdown.select2({
+            data: namespacesForSelect
+        });
+        namespaceDropdown.val("kube-system");
+        namespaceDropdown.trigger('change');
+    });
+    $("#namespaces-dropdown").on("select2:select", function (e) {
+        createSunKeyGraph(e.params.data.text);
+    });
+});
+
+function createSunKeyGraph(namespace) {
+
+    $("#chart").empty();
+    d3.json("http://localhost:3000/roles?namespace=" + namespace, function (error, json) {
+        console.log(json);
+        if (json.links === null || json.nodes.length === 0) {
+            toastr.warning("Selected namespace: " + namespace + " doesn't have any roles");
+        } else {
+            var chart = d3.select("#chart").append("svg").chart("Sankey.Path");
+            chart
+                .colorNodes(function (name, node) {
+                    return color(node, 1) || colors.fallback;
+                })
+                .colorLinks(function (link) {
+                    return color(link.source, 4) || color(link.target, 1) || colors.fallback;
+                })
+                .nodeWidth(15)
+                .nodePadding(10)
+                .spread(true)
+                .iterations(0)
+                .draw(json);
+
+            function color(node, depth) {
+                return '#367d85';
+            }
+        }
+    });
+}

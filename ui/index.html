@@ -3,21 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="app/src/js/app.js"></script>
+
     <script src="app/lib/js/jquery-3.4.0.min.js"></script>
     <script src="app/lib/js/bootstrap.bundle.js"></script>
     <link href="app/lib/css/bootstrap.css" rel="stylesheet">
     <link href="app/src/css/starter-template.css" rel="stylesheet">
-    <script src="//d3js.org/d3.v3.min.js"></script>
-    <script src="//cdn.rawgit.com/newrelic-forks/d3-plugins-sankey/master/sankey.js"></script>
-    <script src="//cdn.rawgit.com/misoproject/d3.chart/master/d3.chart.min.js"></script>
-    <script src="//cdn.rawgit.com/q-m/d3.chart.sankey/master/d3.chart.sankey.min.js"></script>
+    <link href="app/lib/css/select2.min.css" rel="stylesheet">
+    <link href="app/lib/css/toastr.min.css" rel="stylesheet"/>
+    <script src="app/lib/js/d3.v3.min.js"></script>
+    <script src="app/lib/js/sankey.js"></script>
+    <script src="app/lib/js/d3.chart.min.js"></script>
+    <script src="app/lib/js/d3.chart.sankey.min.js"></script>
+    <script src="app/lib/js/toastr.min.js"></script>
+    <script src="app/lib/js/select2.min.js"></script>
+    <script src="app/src/js/app.js"></script>
     <style>
         body {
-            padding: 10px;
+            padding: 20px;
             min-width: 600px;
             max-width: 1200px;
             margin: auto;
+        }
+
+        #toast-container > .customer-info {
+            background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGwSURBVEhLtZa9SgNBEMc9sUxxRcoUKSzSWIhXpFMhhYWFhaBg4yPYiWCXZxBLERsLRS3EQkEfwCKdjWJAwSKCgoKCcudv4O5YLrt7EzgXhiU3/4+b2ckmwVjJSpKkQ6wAi4gwhT+z3wRBcEz0yjSseUTrcRyfsHsXmD0AmbHOC9Ii8VImnuXBPglHpQ5wwSVM7sNnTG7Za4JwDdCjxyAiH3nyA2mtaTJufiDZ5dCaqlItILh1NHatfN5skvjx9Z38m69CgzuXmZgVrPIGE763Jx9qKsRozWYw6xOHdER+nn2KkO+Bb+UV5CBN6WC6QtBgbRVozrahAbmm6HtUsgtPC19tFdxXZYBOfkbmFJ1VaHA1VAHjd0pp70oTZzvR+EVrx2Ygfdsq6eu55BHYR8hlcki+n+kERUFG8BrA0BwjeAv2M8WLQBtcy+SD6fNsmnB3AlBLrgTtVW1c2QN4bVWLATaIS60J2Du5y1TiJgjSBvFVZgTmwCU+dAZFoPxGEEs8nyHC9Bwe2GvEJv2WXZb0vjdyFT4Cxk3e/kIqlOGoVLwwPevpYHT+00T+hWwXDf4AJAOUqWcDhbwAAAAASUVORK5CYII=") !important;
+            background-color: dodgerblue;
         }
 
         #chart {
@@ -54,9 +64,9 @@
         <ul class="navbar-nav mr-auto">
 
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+        <form class="form-inline">
+            <select id="namespaces-dropdown">
+            </select>
         </form>
     </div>
 </nav>
@@ -65,51 +75,9 @@
 
     <div class="starter-template">
         <div id="chart"></div>
-
-        <script>
-            var colors = {
-                'environment': '#edbd00',
-                'social': '#367d85',
-                'animals': '#97ba4c',
-                'health': '#f5662b',
-                'research_ingredient': '#3f3e47',
-                'fallback': '#9f9fa3'
-            };
-            d3.json("http://localhost:3000/roles", function (error, json) {
-                var chart = d3.select("#chart").append("svg").chart("Sankey.Path");
-                chart
-                    .name(label)
-                    .colorNodes(function (name, node) {
-                        return color(node, 1) || colors.fallback;
-                    })
-                    .colorLinks(function (link) {
-                        return color(link.source, 4) || color(link.target, 1) || colors.fallback;
-                    })
-                    .nodeWidth(15)
-                    .nodePadding(10)
-                    .spread(true)
-                    .iterations(0)
-                    .draw(json);
-
-                function label(node) {
-                    return node.name.replace(/\s*\(.*?\)$/, '');
-                }
-
-                function color(node, depth) {
-                    var id = node.id.replace(/(_score)?(_\d+)?$/, '');
-                    if (colors[id]) {
-                        return colors[id];
-                    } else if (depth > 0 && node.targetLinks && node.targetLinks.length == 1) {
-                        return color(node.targetLinks[0].source, depth - 1);
-                    } else {
-                        return '#edbd00';
-                    }
-                }
-            });
-        </script>
     </div>
 
-</main><!-- /.container -->
+</main>
 
 </body>
 </html>
