@@ -24,6 +24,7 @@ $(document).ready(function () {
         data.data.forEach((elem, idx) => {
             namespacesForSelect.push({id: elem, text: elem})
         });
+        namespacesForSelect.push({id: "all", text: "all"});
         let namespaceDropdown = $("#namespaces-dropdown");
         namespaceDropdown.select2({
             data: namespacesForSelect
@@ -39,6 +40,7 @@ $(document).ready(function () {
 function createSunKeyGraph(namespace) {
 
     $("#chart").empty();
+    if (namespace === "all") namespace = "";
     d3.json("http://localhost:3000/roles?namespace=" + namespace, function (error, json) {
         console.log(json);
         if (json.links === null || json.nodes.length === 0) {

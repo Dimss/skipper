@@ -18,20 +18,8 @@
     <script src="app/lib/js/select2.min.js"></script>
     <script src="app/src/js/app.js"></script>
     <style>
-        body {
-            padding: 20px;
-            min-width: 600px;
-            max-width: 1200px;
-            margin: auto;
-        }
-
-        #toast-container > .customer-info {
-            background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGwSURBVEhLtZa9SgNBEMc9sUxxRcoUKSzSWIhXpFMhhYWFhaBg4yPYiWCXZxBLERsLRS3EQkEfwCKdjWJAwSKCgoKCcudv4O5YLrt7EzgXhiU3/4+b2ckmwVjJSpKkQ6wAi4gwhT+z3wRBcEz0yjSseUTrcRyfsHsXmD0AmbHOC9Ii8VImnuXBPglHpQ5wwSVM7sNnTG7Za4JwDdCjxyAiH3nyA2mtaTJufiDZ5dCaqlItILh1NHatfN5skvjx9Z38m69CgzuXmZgVrPIGE763Jx9qKsRozWYw6xOHdER+nn2KkO+Bb+UV5CBN6WC6QtBgbRVozrahAbmm6HtUsgtPC19tFdxXZYBOfkbmFJ1VaHA1VAHjd0pp70oTZzvR+EVrx2Ygfdsq6eu55BHYR8hlcki+n+kERUFG8BrA0BwjeAv2M8WLQBtcy+SD6fNsmnB3AlBLrgTtVW1c2QN4bVWLATaIS60J2Du5y1TiJgjSBvFVZgTmwCU+dAZFoPxGEEs8nyHC9Bwe2GvEJv2WXZb0vjdyFT4Cxk3e/kIqlOGoVLwwPevpYHT+00T+hWwXDf4AJAOUqWcDhbwAAAAASUVORK5CYII=") !important;
-            background-color: dodgerblue;
-        }
-
         #chart {
-            height: 500px;
+            height: 800px;
             font: 13px sans-serif;
         }
 
@@ -62,7 +50,18 @@
 
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Roles<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Roles Bindings<span class="sr-only"></span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Cluster Roles<span class="sr-only"></span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Cluster Roles Binding<span class="sr-only"></span></a>
+            </li>
         </ul>
         <form class="form-inline">
             <select id="namespaces-dropdown">
@@ -71,11 +70,11 @@
     </div>
 </nav>
 
-<main role="main" class="container">
+<main role="main" class="container-fluid">
 
-    <div class="starter-template">
-        <div id="chart"></div>
-    </div>
+    <!--<div class="starter-template">-->
+    <div id="chart"></div>
+    <!--</div>-->
 
 </main>
 
