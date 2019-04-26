@@ -35,12 +35,22 @@ $(document).ready(function () {
     $("#namespaces-dropdown").on("select2:select", function (e) {
         createSunKeyGraph(e.params.data.text);
     });
+
+    $(".nav-item").on("click", function (e) {
+        $(".nav-item").each((idx, el) => {
+            $(el).removeClass("active")
+        });
+        $(e.currentTarget).addClass("active");
+
+    });
 });
 
 function createSunKeyGraph(namespace) {
 
     $("#chart").empty();
     if (namespace === "all") namespace = "";
+
+
     d3.json("http://localhost:3000/roles?namespace=" + namespace, function (error, json) {
         console.log(json);
         if (json.links === null || json.nodes.length === 0) {
@@ -65,4 +75,5 @@ function createSunKeyGraph(namespace) {
             }
         }
     });
+
 }
