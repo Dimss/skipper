@@ -1,9 +1,4 @@
-package rbac
-
-type ResponsePayload struct {
-	Status string      `json:"status"`
-	Data   interface{} `json:"data"`
-}
+package roles
 
 type Users struct {
 	Users []string `json:"users"`

@@ -1,4 +1,4 @@
-package rbac
+package roles
 
 import (
 	"github.com/sirupsen/logrus"

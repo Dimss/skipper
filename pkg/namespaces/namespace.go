@@ -1,4 +1,4 @@
-package rbac
+package namespaces
 
 import (
 	"github.com/sirupsen/logrus"

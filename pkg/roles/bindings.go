@@ -1,6 +1,7 @@
-package rbac
+package roles
 
 import (
+	namespaces2 "github.com/dimss/skipper/pkg/namespaces"
 	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	rbacV1 "k8s.io/client-go/kubernetes/typed/rbac/v1"
@@ -21,7 +22,7 @@ func GetBindings() (ocpRoles map[string][]string) {
 	if err != nil {
 		panic(err.Error())
 	}
-	namespaces := GetNamespaces()
+	namespaces := namespaces2.GetNamespaces()
 	for _, ns := range namespaces {
 		roles, err := rbacV1Client.Roles(ns).List(metav1.ListOptions{})
 		if err != nil {

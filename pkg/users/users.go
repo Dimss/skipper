@@ -1,4 +1,4 @@
-package rbac
+package users
 
 import (
 	userv1 "github.com/openshift/client-go/user/clientset/versioned/typed/user/v1"
