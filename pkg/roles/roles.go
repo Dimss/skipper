@@ -1,7 +1,7 @@
 package roles
 
 import (
-	"github.com/dimss/skipper/pkg/sunkey"
+	"github.com/dimss/skipper/pkg/sankey"
 	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	rbacV1 "k8s.io/client-go/kubernetes/typed/rbac/v1"
@@ -38,7 +38,7 @@ func getClusterRoles(rbacV1Client *rbacV1.RbacV1Client) (nsRoles []string) {
 	return
 }
 
-func GetRoles(ns string) (sunkeyData sunkey.SunkeyData) {
+func GetRoles(ns string) (sunkeyData sankey.GraphData) {
 	ocpRoles := make(map[string][]rbacApiV1.Role)
 	logrus.Info("Getting roles")
 	conf := "/Users/dima/.kube/config"
@@ -69,9 +69,12 @@ func GetRoles(ns string) (sunkeyData sunkey.SunkeyData) {
 			ocpRoles[ns] = roles
 		}
 	}
-	nodes, sunkeyNodes := sunkey.GetNodes(ocpRoles)
-	links := sunkey.GetLinks(ocpRoles, nodes)
-	sunkeyData.Nodes = sunkeyNodes
-	sunkeyData.Links = links
+	sd := sankey.NewSankey(ocpRoles)
+	sd.CreateGraphData()
+	sunkeyData = *sd
+	//nodes, sunkeyNodes := sankey.GetNodes(ocpRoles)
+	//links := sankey.GetLinks(ocpRoles, nodes)
+	//sunkeyData.Nodes = sunkeyNodes
+	//sunkeyData.Links = links
 	return
 }
