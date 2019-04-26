@@ -21,7 +21,7 @@ $(document).ready(function () {
     createSunKeyGraph("kube-system");
     $.getJSON("/namespaces", function (data) {
         let namespacesForSelect = [];
-        data.data.forEach((elem, idx) => {
+        data.forEach((elem, idx) => {
             namespacesForSelect.push({id: elem, text: elem})
         });
         namespacesForSelect.push({id: "all", text: "all"});
