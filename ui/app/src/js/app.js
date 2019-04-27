@@ -51,7 +51,7 @@ function createSunKeyGraph(namespace) {
     if (namespace === "all") namespace = "";
 
 
-    d3.json("http://localhost:3000/roles?namespace=" + namespace, function (error, json) {
+    d3.json("http://localhost:3000/roles?ns=" + namespace, function (error, json) {
         console.log(json);
         if (json.links === null || json.nodes.length === 0) {
             toastr.warning("Selected namespace: " + namespace + " doesn't have any roles");

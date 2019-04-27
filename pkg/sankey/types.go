@@ -1,7 +1,8 @@
 package sankey
 
 type Sankey interface {
-	CreateGraphData(k8sObjects interface{}) *GraphData
+	LoadK8SObjects()
+	CreateGraphData()
 }
 
 type Node struct {
@@ -15,9 +16,3 @@ type Link struct {
 	Value  int `json:"value"`
 }
 
-type GraphData struct {
-	Nodes         []Node `json:"nodes"`
-	Links         []Link `json:"links"`
-	nodesIndexMap map[string]int
-	k8sObjects    interface{}
-}
