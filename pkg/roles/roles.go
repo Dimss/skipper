@@ -91,15 +91,15 @@ func (d *RoleSankeyGraph) createLinks() (links []sankey.Link) {
 			for _, rule := range role.Rules {
 				for _, verb := range rule.Verbs {
 					links = append(links, sankey.Link{
-						Source: d.nodesIndexMap[verb],
-						Target: d.nodesIndexMap[role.Name],
+						Source: verb,
+						Target: role.Name,
 						Value:  1,
 					})
 				}
 				for _, resource := range rule.Resources {
 					links = append(links, sankey.Link{
-						Source: d.nodesIndexMap[role.Name],
-						Target: d.nodesIndexMap[resource],
+						Source: role.Name,
+						Target: resource,
 						Value:  1,
 					})
 				}

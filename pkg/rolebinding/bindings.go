@@ -80,14 +80,14 @@ func (rb *RolesBindingSankeyGraph) createLinks() (links []sankey.Link) {
 
 	for _, roleBinding := range rb.rolesBindings {
 		links = append(links, sankey.Link{
-			Source: rb.nodesIndexMap[roleBinding.RoleRef.Name],
-			Target: rb.nodesIndexMap[roleBinding.Name],
+			Source: roleBinding.RoleRef.Name,
+			Target: roleBinding.Name,
 			Value:  1,
 		})
 		for _, subject := range roleBinding.Subjects {
 			links = append(links, sankey.Link{
-				Source: rb.nodesIndexMap[subject.Name],
-				Target: rb.nodesIndexMap[roleBinding.Name],
+				Source: subject.Name,
+				Target: roleBinding.Name,
 				Value:  1,
 			})
 		}

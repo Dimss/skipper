@@ -11,8 +11,7 @@ type Node struct {
 }
 
 type Link struct {
-	Source int `json:"source"`
-	Target int `json:"target"`
-	Value  int `json:"value"`
+	Source string `json:"source"`
+	Target string `json:"target"`
+	Value  int    `json:"value"`
 }
-
