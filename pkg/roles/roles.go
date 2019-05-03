@@ -43,6 +43,10 @@ func (d *RoleSankeyGraph) LoadK8SObjects() () {
 }
 
 func (d *RoleSankeyGraph) CreateGraphData() {
+	if (len(d.roles) == 0) {
+		logrus.Warn("Empty roles list, gonna return empty results")
+		return
+	}
 	d.nodesIndexMap = d.createNodesIndexMap()
 	d.Nodes = d.createNodes()
 	d.Links = d.createLinks()

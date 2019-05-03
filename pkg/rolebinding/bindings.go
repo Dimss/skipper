@@ -5,7 +5,6 @@ import (
 	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	rbacV1 "k8s.io/client-go/kubernetes/typed/rbac/v1"
-
 	"k8s.io/client-go/tools/clientcmd"
 )
 
@@ -39,39 +38,33 @@ func (rb *RolesBindingSankeyGraph) LoadK8SObjects() {
 }
 
 func (rb *RolesBindingSankeyGraph) CreateGraphData() {
+	if (len(rb.rolesBindings) == 0) {
+		logrus.Warn("Empty rolesbinding list, gonna return empty results")
+		return
+	}
 	rb.nodesIndexMap = rb.createNodesIndexMap()
 	rb.Nodes = rb.createNodes()
 	rb.Links = rb.createLinks()
 }
 
 func (d *RolesBindingSankeyGraph) createNodesIndexMap() (nodes map[string]int) {
-	i := 0
 	nodes = make(map[string]int)
 	for _, roleBinding := range d.rolesBindings {
-		if _, ok := nodes[roleBinding.Name]; !ok {
-			nodes[roleBinding.Name] = i
-			i++
-		}
-		if _, ok := nodes[roleBinding.RoleRef.Name]; !ok {
-			nodes[roleBinding.RoleRef.Name] = i
-			i++
-		}
-
+		nodes["rb-"+roleBinding.Name] = 1
+		nodes["r-"+roleBinding.RoleRef.Name] = 1
 		for _, subject := range roleBinding.Subjects {
-			if _, ok := nodes[subject.Name]; !ok {
-				nodes[subject.Name] = i
-				i++
-			}
+			nodes["s-"+subject.Name] = 1
 		}
-
 	}
 	return
 }
 
 func (rb *RolesBindingSankeyGraph) createNodes() (nodes []sankey.Node) {
+	i := 0
 	nodes = make([]sankey.Node, len(rb.nodesIndexMap))
-	for node, idx := range rb.nodesIndexMap {
-		nodes[idx] = sankey.Node{node, node}
+	for node := range rb.nodesIndexMap {
+		nodes[i] = sankey.Node{node, node}
+		i++
 	}
 	return
 }
@@ -80,14 +73,14 @@ func (rb *RolesBindingSankeyGraph) createLinks() (links []sankey.Link) {
 
 	for _, roleBinding := range rb.rolesBindings {
 		links = append(links, sankey.Link{
-			Source: roleBinding.RoleRef.Name,
-			Target: roleBinding.Name,
+			Source: "r-" + roleBinding.RoleRef.Name,
+			Target: "rb-" + roleBinding.Name,
 			Value:  1,
 		})
 		for _, subject := range roleBinding.Subjects {
 			links = append(links, sankey.Link{
-				Source: subject.Name,
-				Target: roleBinding.Name,
+				Source: "rb-" + roleBinding.Name,
+				Target: "s-" + subject.Name,
 				Value:  1,
 			})
 		}
