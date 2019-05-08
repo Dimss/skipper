@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/dimss/skipper/pkg/clusterrole"
+	"github.com/dimss/skipper/pkg/clusterrolebinding"
 	"github.com/dimss/skipper/pkg/namespaces"
 	"github.com/dimss/skipper/pkg/rolebinding"
 	"github.com/dimss/skipper/pkg/roles"
@@ -25,6 +27,8 @@ func main() {
 	r.Get("/roles", roles.GetRolesHandler)
 	r.Get("/bindings", rolebinding.GetRolesBindingsHandler)
 	r.Get("/namespaces", namespaces.GetNamespacesHandler)
+	r.Get("/clusterroles", clusterrole.GetClusterRolesHandler)
+	r.Get("/clusterrolesbindings", clusterrolebinding.GetClusterRolesBindingsHandler)
 	uiserver.UiServer(r, "/ui")
 	http.ListenAndServe(":3001", r)
 }
