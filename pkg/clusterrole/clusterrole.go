@@ -1,25 +1,19 @@
 package clusterrole
 
 import (
+	"github.com/dimss/skipper/pkg/clientcmdconfigs"
 	"github.com/dimss/skipper/pkg/sankey"
 	"github.com/sirupsen/logrus"
 	rbacApiV1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	rbacV1 "k8s.io/client-go/kubernetes/typed/rbac/v1"
-	"k8s.io/client-go/tools/clientcmd"
 )
 
 func (cr *ClusterRoleSankeyGraph) LoadK8SObjects() () {
 	cr.clusterRoles = make(map[string][]rbacApiV1.ClusterRole)
 	logrus.Info("Getting roles")
-	conf := "/Users/dima/.kube/config"
-	config, err := clientcmd.BuildConfigFromFlags("", conf)
 
-	if err != nil {
-		panic(err.Error())
-	}
-
-	rbacV1Client, err := rbacV1.NewForConfig(config)
+	rbacV1Client, err := rbacV1.NewForConfig(clientcmdconfigs.GetClientcmdConfigs())
 	if err != nil {
 		panic(err.Error())
 	}
@@ -34,6 +28,10 @@ func (cr *ClusterRoleSankeyGraph) LoadK8SObjects() () {
 		cr.clusterRoles[ocpRole.Namespace] = append(cr.clusterRoles[ocpRole.Namespace], ocpRole)
 	}
 	return
+}
+
+func (cr *ClusterRoleSankeyGraph) GetK8SObjects() interface{} {
+	return cr.clusterRoles
 }
 
 func (cr *ClusterRoleSankeyGraph) CreateGraphData() {

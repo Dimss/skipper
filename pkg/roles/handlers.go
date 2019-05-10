@@ -3,6 +3,7 @@ package roles
 import (
 	"encoding/json"
 	"github.com/dimss/skipper/pkg/sankey"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -19,3 +20,18 @@ func GetRolesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func WatchHandler(w http.ResponseWriter, r *http.Request, watchRolesChan chan WatchRoleRequest) {
+	b, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	watchRoleRequest := WatchRoleRequest{}
+	err = json.Unmarshal(b, &watchRoleRequest)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	watchRolesChan <- watchRoleRequest
+}

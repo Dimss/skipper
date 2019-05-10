@@ -1,23 +1,18 @@
 package clusterrolebinding
 
 import (
+	"github.com/dimss/skipper/pkg/clientcmdconfigs"
 	"github.com/dimss/skipper/pkg/sankey"
 	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	rbacV1 "k8s.io/client-go/kubernetes/typed/rbac/v1"
-	"k8s.io/client-go/tools/clientcmd"
 )
 
 func (crb *ClusterRolesBindingSankeyGraph) LoadK8SObjects() {
 
 	logrus.Info("Getting roles")
-	conf := "/Users/dima/.kube/config"
-	config, err := clientcmd.BuildConfigFromFlags("", conf)
-	if err != nil {
-		panic(err.Error())
-	}
 
-	rbacV1Client, err := rbacV1.NewForConfig(config)
+	rbacV1Client, err := rbacV1.NewForConfig(clientcmdconfigs.GetClientcmdConfigs())
 	if err != nil {
 		panic(err.Error())
 	}
@@ -30,6 +25,10 @@ func (crb *ClusterRolesBindingSankeyGraph) LoadK8SObjects() {
 		crb.clusterRolesBindings = append(crb.clusterRolesBindings, ocpRole)
 	}
 	return
+}
+
+func (crb *ClusterRolesBindingSankeyGraph) GetK8SObjects() interface{} {
+	return crb.clusterRolesBindings
 }
 
 func (crb *ClusterRolesBindingSankeyGraph) CreateGraphData() {

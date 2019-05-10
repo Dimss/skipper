@@ -2,6 +2,7 @@ package sankey
 
 type Sankey interface {
 	LoadK8SObjects()
+	GetK8SObjects() (interface{})
 	CreateGraphData()
 }
 

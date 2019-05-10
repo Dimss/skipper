@@ -1,11 +1,11 @@
 package rolebinding
 
 import (
+	"github.com/dimss/skipper/pkg/clientcmdconfigs"
 	"github.com/dimss/skipper/pkg/sankey"
 	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	rbacV1 "k8s.io/client-go/kubernetes/typed/rbac/v1"
-	"k8s.io/client-go/tools/clientcmd"
 )
 
 func NewRolesBindingsSankeyGraph(ns string) *RolesBindingSankeyGraph {
@@ -16,13 +16,7 @@ func NewRolesBindingsSankeyGraph(ns string) *RolesBindingSankeyGraph {
 func (rb *RolesBindingSankeyGraph) LoadK8SObjects() {
 
 	logrus.Info("Getting roles")
-	conf := "/Users/dima/.kube/config"
-	config, err := clientcmd.BuildConfigFromFlags("", conf)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	rbacV1Client, err := rbacV1.NewForConfig(config)
+	rbacV1Client, err := rbacV1.NewForConfig(clientcmdconfigs.GetClientcmdConfigs())
 	if err != nil {
 		panic(err.Error())
 	}
@@ -35,6 +29,10 @@ func (rb *RolesBindingSankeyGraph) LoadK8SObjects() {
 		rb.rolesBindings = append(rb.rolesBindings, ocpRole)
 	}
 	return
+}
+
+func (rb *RolesBindingSankeyGraph) GetK8SObjects() interface{} {
+	return rb.rolesBindings
 }
 
 func (rb *RolesBindingSankeyGraph) CreateGraphData() {

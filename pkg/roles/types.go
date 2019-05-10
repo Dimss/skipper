@@ -10,5 +10,10 @@ type RoleSankeyGraph struct {
 	Links         []sankey.Link `json:"links"`
 	nodesIndexMap map[string]int
 	namespace     string
-	roles         map[string][]rbacApiV1.Role
+	roles         []rbacApiV1.Role
+}
+
+type WatchRoleRequest struct {
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
 }
