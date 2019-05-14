@@ -6,6 +6,8 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	rbacApiV1 "k8s.io/api/rbac/v1"
+
 	"time"
 )
 
@@ -40,7 +42,7 @@ func storeRoles() {
 	logrus.Info("Roles sankey data loaded")
 }
 
-func getWatchRoles() (watchRoles []WatchRoleRequest) {
+func getWatchRolesRequest() (watchRoles []WatchRoleRequest) {
 	watchRoles = []WatchRoleRequest{}
 	redisCmd := redisClient.Get("watchRoles")
 	if redisCmd.Val() == "" {
@@ -53,8 +55,8 @@ func getWatchRoles() (watchRoles []WatchRoleRequest) {
 	return
 }
 
-func setWatchRoles(role WatchRoleRequest) {
-	watchRoles := getWatchRoles()
+func setWatchRolesRequest(role WatchRoleRequest) {
+	watchRoles := getWatchRolesRequest()
 	watchRoles = append(watchRoles, role)
 	if jsonString, err := json.Marshal(watchRoles); err == nil {
 		err := redisClient.Set(watchRoleRedisKey, jsonString, 0).Err()
@@ -64,14 +66,37 @@ func setWatchRoles(role WatchRoleRequest) {
 	}
 }
 
+func storeRole(role rbacApiV1.Role) {
+	roles := []rbacApiV1.Role{}
+	redisCmd := redisClient.Get("roles")
+	if redisCmd.Val() == "" {
+		roles = append(roles, role)
+		jsonString, err := json.Marshal(roles)
+		if err != nil {
+			panic(err)
+		}
+		err = redisClient.Set("roles", jsonString, 0).Err()
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		if err := json.Unmarshal([]byte(redisCmd.Val()), &roles); err != nil {
+			logrus.Error("Enable to unmarshal JSON string from redis")
+			panic(err)
+		}
+		roles = append(roles, role)
+	}
+}
+
 func watch() {
+
 	for {
-		watchRoles := getWatchRoles()
-		if len(watchRoles) == 0 {
+		watchRolesRequests := getWatchRolesRequest()
+		if len(watchRolesRequests) == 0 {
 			continue
 		}
-		for _, role := range watchRoles {
-			logrus.Info(role)
+		for _, watchRequest := range watchRolesRequests {
+			logrus.Info(watchRequest)
 		}
 		time.Sleep(time.Second * 2)
 	}
@@ -80,6 +105,6 @@ func watch() {
 func StartRolesWatcher(watchRolesChan chan WatchRoleRequest) {
 	go watch()
 	for role := range watchRolesChan {
-		setWatchRoles(role)
+		setWatchRolesRequest(role)
 	}
 }
