@@ -114,7 +114,7 @@ func (d *RoleSankeyGraph) cacheRoleSankeyGraph() {
 		panic(err)
 	}
 	redisClient = redis.NewClient(&redis.Options{Addr: viper.GetString("redis.conn")})
-	err = redisClient.Set("roles", rolesAsJsonString, time.Second * viper.GetDuration("redis.ttl")).Err()
+	err = redisClient.Set("roles-"+d.namespace, rolesAsJsonString, time.Second*viper.GetDuration("redis.ttl")).Err()
 	if err != nil {
 		panic(err)
 	}
@@ -122,7 +122,7 @@ func (d *RoleSankeyGraph) cacheRoleSankeyGraph() {
 
 func (d *RoleSankeyGraph) loadRoleSankeyGraph() {
 	redisClient = redis.NewClient(&redis.Options{Addr: viper.GetString("redis.conn")})
-	redisCmd := redisClient.Get("roles")
+	redisCmd := redisClient.Get("roles-" + d.namespace)
 	if redisCmd.Val() != "" {
 		logrus.Info("Reading roles from cache")
 		err := json.Unmarshal([]byte(redisCmd.Val()), d)

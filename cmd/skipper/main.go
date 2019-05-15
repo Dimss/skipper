@@ -28,12 +28,15 @@ var webServerCmd = &cobra.Command{
 	Use:   "server",
 	Short: "Start API and UI server ",
 	Run: func(cmd *cobra.Command, args []string) {
+
 		watchRolesChan := make(chan roles.WatchRoleRequest, 100)
 		// Start role watcher
 		go roles.StartRolesWatcher(watchRolesChan)
 		// Start web server
 		logrus.Info("Starting up web server...")
+
 		r := chi.NewRouter()
+
 		cors := cors.New(cors.Options{
 			AllowedOrigins:   []string{"*"},
 			AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -43,15 +46,17 @@ var webServerCmd = &cobra.Command{
 			MaxAge:           300,
 		})
 		r.Use(cors.Handler)
-		r.Get("/roles", roles.GetRolesHandler)
-		r.Post("/roles/watch", func(w http.ResponseWriter, r *http.Request) {
+		r.Get("/api/roles", roles.GetRolesHandler)
+		r.Post("/api/roles/watch", func(w http.ResponseWriter, r *http.Request) {
 			roles.WatchHandler(w, r, watchRolesChan)
 		})
-		r.Get("/bindings", rolebinding.GetRolesBindingsHandler)
-		r.Get("/namespaces", namespaces.GetNamespacesHandler)
-		r.Get("/clusterroles", clusterrole.GetClusterRolesHandler)
-		r.Get("/clusterrolesbindings", clusterrolebinding.GetClusterRolesBindingsHandler)
+		r.Get("/api/bindings", rolebinding.GetRolesBindingsHandler)
+		r.Get("/api/namespaces", namespaces.GetNamespacesHandler)
+		r.Get("/api/clusterroles", clusterrole.GetClusterRolesHandler)
+		r.Get("/api/clusterrolesbindings", clusterrolebinding.GetClusterRolesBindingsHandler)
+
 		uiserver.UiServer(r, "/ui")
+
 		http.ListenAndServe(viper.GetString("app.bind"), r)
 
 	},
