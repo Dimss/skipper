@@ -2,14 +2,20 @@ kind: "BuildConfig"
 apiVersion: "v1"
 metadata:
   name: "skipper"
-  namespace: "chuck-ops"
 spec:
   runPolicy: "Serial"
   source:
     git:
-      uri: "https://github.com/Dimss/chuck-api"
+      uri: "https://github.com/Dimss/skipper"
   strategy:
     customStrategy:
       from:
-        kind: "ImageStreamTag"
-        name: "base-builder:stable"
+        kind: "DockerImage"
+        name: "dimssss/golang-s2i:0.4"
+  output:
+    to:
+      kind: "DockerImage"
+      name: "dimssss/skipper:0.1"
+    pushSecret:
+      name: docker-hub-dimssss
+
