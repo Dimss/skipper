@@ -1,0 +1,3 @@
+#!/bin/ash
+cd /go/bin
+./skipper server
