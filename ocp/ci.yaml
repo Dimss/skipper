@@ -8,14 +8,17 @@ spec:
     git:
       uri: "https://github.com/Dimss/skipper"
   strategy:
-    customStrategy:
+    sourceStrategy:
       from:
         kind: "DockerImage"
         name: "dimssss/golang-s2i:0.4"
   output:
     to:
       kind: "DockerImage"
-      name: "dimssss/skipper:0.1"
+      name: "docker.io/dimssss/skipper:0.1"
     pushSecret:
       name: docker-hub-dimssss
-
+  triggers:
+    - type: "GitHub"
+      github:
+        secret: "dGvu1slX2WybtV_HOcYJ"

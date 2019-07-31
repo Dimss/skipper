@@ -3,6 +3,6 @@ mv /tmp/src /go/src/skipper
 cd /go/src/skipper/cmd/skipper
 export GO111MODULE=on
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /go/bin/skipper
-cp /go/src/skipper/config.tmpl /go/bin/config.json
+cp /go/src/skipper/config.json /go/bin/config.json
 rm -fr /go/src/skipper
 chmod +x /go/bin/skipper
