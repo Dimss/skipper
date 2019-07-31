@@ -1,0 +1,15 @@
+kind: "BuildConfig"
+apiVersion: "v1"
+metadata:
+  name: "skipper"
+  namespace: "chuck-ops"
+spec:
+  runPolicy: "Serial"
+  source:
+    git:
+      uri: "https://github.com/Dimss/chuck-api"
+  strategy:
+    customStrategy:
+      from:
+        kind: "ImageStreamTag"
+        name: "base-builder:stable"
